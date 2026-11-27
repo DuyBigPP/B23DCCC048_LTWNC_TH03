@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
+import Header from '@/components/Header';
+import Providers from './providers';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -7,15 +8,16 @@ export const metadata: Metadata = {
   description: 'Tìm đồ thất lạc trong trường PTIT',
 };
 
+// Không gọi auth() ở đây: sẽ biến mọi trang thành dynamic, mất SSG.
 export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
     <html lang="vi">
       <body>
-        <nav>
-          <Link href="/">Trang chủ</Link>
-          <Link href="/posts">Tin đăng</Link>
-        </nav>
-        {children}
+        <Providers>
+          <Header />
+          {children}
+        </Providers>
+        <footer className="site-footer">PTIT Found · Tìm đồ thất lạc trong trường PTIT</footer>
       </body>
     </html>
   );

@@ -27,3 +27,11 @@ export const getPublicPost = async (id: number): Promise<Post | undefined> => {
   const post = db.posts.find((p) => p.id === id);
   return post && isPublic(post) ? post : undefined;
 };
+
+/** Chỉ đổi tin đang chờ duyệt; trả false nếu không đổi gì. */
+export const moderatePostInDb = (id: number, status: 'approved' | 'hidden'): boolean => {
+  const post = db.posts.find((p) => p.id === id);
+  if (!post || post.status !== 'pending') return false;
+  post.status = status;
+  return true;
+};

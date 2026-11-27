@@ -1,3 +1,7 @@
 export default function Loading() {
-  return <main><p>Đang tải tin đăng...</p></main>;
+  return (
+    <main>
+      <p className="card empty-state">Đang tải tin đăng...</p>
+    </main>
+  );
 }

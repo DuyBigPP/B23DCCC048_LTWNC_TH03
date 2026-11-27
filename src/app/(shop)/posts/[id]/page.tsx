@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { formatDate } from '@/lib/format';
 import { getPublicPost, getPublicPosts } from '@/lib/posts';
@@ -41,9 +42,10 @@ export default async function PostDetailPage({ params }: PageProps<'/posts/[id]'
 
   return (
     <main>
+      <article className="card detail">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\u003c') }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
       />
       <h1>{post.title}</h1>
       <p>Loại tin: {post.kind}</p>
@@ -51,8 +53,10 @@ export default async function PostDetailPage({ params }: PageProps<'/posts/[id]'
       <p>Địa điểm: {post.place}</p>
       <p>Ngày: {formatDate(post.date)}</p>
       <p>Người đăng: {post.authorEmail}</p>
-      <p style={{ whiteSpace: 'pre-line' }}>{post.description}</p>
-      <p>Cập nhật lúc: {new Date().toLocaleTimeString('vi-VN', { hour12: false })}</p>
+      <p className="desc">{post.description}</p>
+      <p className="meta">Cập nhật lúc: {new Date().toLocaleTimeString('vi-VN', { hour12: false })}</p>
+      </article>
+      <p><Link href="/posts">← Quay lại danh sách</Link></p>
     </main>
   );
 }

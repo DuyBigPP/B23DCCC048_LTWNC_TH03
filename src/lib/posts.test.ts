@@ -1,6 +1,12 @@
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { generatePosts } from '../data/posts';
 import { db } from './db';
-import { getPublicPost, getPublicPosts } from './posts';
+import { getPublicPost, getPublicPosts, moderatePostInDb } from './posts';
+
+beforeEach(() => {
+  db.posts.splice(0, db.posts.length, ...generatePosts(36));
+  db.nextPostId = 37;
+});
 
 describe('getPublicPosts', () => {
   it('không lọc thì trả 24 tin công khai', async () => {
@@ -37,5 +43,24 @@ describe('getPublicPost', () => {
     expect(await getPublicPost(5)).toBeUndefined();
     expect(await getPublicPost(6)).toBeUndefined();
     expect(await getPublicPost(999)).toBeUndefined();
+  });
+});
+
+describe('moderatePostInDb', () => {
+  it('duyệt tin đang chờ thì tin thành công khai', async () => {
+    expect(moderatePostInDb(5, 'approved')).toBe(true);
+    expect((await getPublicPost(5))?.title).toBe('Mất áo khoác màu đen');
+  });
+
+  it('ẩn tin đang chờ thì đổi trạng thái thành hidden', () => {
+    expect(moderatePostInDb(11, 'hidden')).toBe(true);
+    expect(db.posts.find((p) => p.id === 11)?.status).toBe('hidden');
+  });
+
+  it('không đổi tin không ở trạng thái chờ duyệt hoặc không tồn tại', () => {
+    expect(moderatePostInDb(2, 'hidden')).toBe(false);
+    expect(db.posts.find((p) => p.id === 2)?.status).toBe('approved');
+    expect(moderatePostInDb(6, 'approved')).toBe(false);
+    expect(moderatePostInDb(999, 'approved')).toBe(false);
   });
 });

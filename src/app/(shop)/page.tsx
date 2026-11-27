@@ -5,9 +5,11 @@ export default async function HomePage() {
   const posts = await getPublicPosts();
   return (
     <main>
-      <h1>PTIT Found – Tìm đồ thất lạc</h1>
-      <p>{posts.length} tin đang hiển thị</p>
-      <Link href="/posts">Xem tất cả tin</Link>
+      <section className="card hero">
+        <h1>PTIT Found – Tìm đồ thất lạc</h1>
+        <p className="big">{posts.length} tin đang hiển thị</p>
+        <Link href="/posts" className="btn btn-primary">Xem tất cả tin</Link>
+      </section>
     </main>
   );
 }
