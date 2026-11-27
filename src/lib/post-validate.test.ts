@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { PostInput } from './post-validate';
-import { today, toPostInput, validatePost } from './post-validate';
+import { today, toPostInput, validateImage, validatePost } from './post-validate';
 
 const NOW = '2026-11-27';
 const valid: PostInput = {
@@ -93,5 +93,24 @@ describe('today', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date(2026, 10, 27, 0, 30)); // 00:30 giờ địa phương
     expect(today()).toBe('2026-11-27');
+  });
+});
+
+describe('validateImage', () => {
+  const file = (size: number, type: string) => new File([new Uint8Array(size)], 'anh', { type });
+
+  it('không chọn ảnh thì hợp lệ (ảnh là tùy chọn)', () => {
+    expect(validateImage(null)).toBeUndefined();
+    expect(validateImage(file(0, 'application/octet-stream'))).toBeUndefined();
+  });
+
+  it('ảnh JPG, PNG, WEBP, GIF dưới 800 KB thì hợp lệ', () => {
+    expect(validateImage(file(1000, 'image/png'))).toBeUndefined();
+    expect(validateImage(file(800 * 1024, 'image/jpeg'))).toBeUndefined();
+  });
+
+  it('sai định dạng hoặc quá 800 KB thì báo lỗi', () => {
+    expect(validateImage(file(10, 'text/plain'))).toBe('Ảnh phải là JPG, PNG, WEBP hoặc GIF');
+    expect(validateImage(file(800 * 1024 + 1, 'image/png'))).toBe('Ảnh tối đa 800 KB');
   });
 });

@@ -15,5 +15,6 @@ export async function moderatePost(id: number, status: 'approved' | 'hidden'): P
     revalidatePath('/posts');
     revalidatePath('/');
     revalidatePath(`/posts/${id}`);
+    revalidatePath('/sitemap.xml');
   }
 }

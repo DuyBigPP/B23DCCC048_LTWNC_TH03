@@ -87,6 +87,10 @@ export default function PostForm({ action }: Props) {
           {error('contact')}
         </div>
       </div>
+      <div className="field">
+        <label htmlFor="post-image">Ảnh đồ vật (tùy chọn, JPG/PNG/WEBP/GIF, tối đa 800 KB)</label>
+        <input id="post-image" name="image" type="file" accept="image/jpeg,image/png,image/webp,image/gif" />
+      </div>
       <div>
         <button type="submit" disabled={pending}>
           Đăng tin

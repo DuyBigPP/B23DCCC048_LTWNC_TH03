@@ -1,7 +1,9 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { generatePosts } from '../data/posts';
+import { PLACES, generatePosts } from '../data/posts';
 import { db } from './db';
-import { getPublicPost, getPublicPosts, moderatePostInDb } from './posts';
+import {
+  countByStatus, getPublicPost, getPublicPosts, listPending, moderatePostInDb, parsePostFilter,
+} from './posts';
 
 beforeEach(() => {
   db.posts.splice(0, db.posts.length, ...generatePosts(36));
@@ -62,5 +64,41 @@ describe('moderatePostInDb', () => {
     expect(db.posts.find((p) => p.id === 2)?.status).toBe('approved');
     expect(moderatePostInDb(6, 'approved')).toBe(false);
     expect(moderatePostInDb(999, 'approved')).toBe(false);
+  });
+});
+
+describe('parsePostFilter', () => {
+  it('giữ giá trị hợp lệ của q, kind, sort, place', () => {
+    expect(parsePostFilter({ q: ' thẻ ', kind: 'Thất lạc', sort: 'date-desc', place: 'Thư viện' })).toEqual({
+      q: 'thẻ', kind: 'Thất lạc', sort: 'date-desc', place: 'Thư viện',
+    });
+  });
+
+  it('giá trị rác hoặc mảng thì bỏ qua, không làm trang lỗi', () => {
+    expect(parsePostFilter({ kind: 'abc', sort: 'random', place: 'Tòa Z9', q: ['a', 'b'] })).toEqual({
+      q: 'a', kind: '', sort: '', place: '',
+    });
+    expect(parsePostFilter({})).toEqual({ q: '', kind: '', sort: '', place: '' });
+  });
+});
+
+describe('lọc theo địa điểm', () => {
+  it('chỉ trả tin ở địa điểm đã chọn, tổng 4 địa điểm bằng 24', async () => {
+    let sum = 0;
+    for (const place of PLACES) {
+      const list = await getPublicPosts({ place });
+      expect(list.every((p) => p.place === place)).toBe(true);
+      sum += list.length;
+    }
+    expect(sum).toBe(24);
+  });
+});
+
+describe('countByStatus và listPending', () => {
+  it('đếm 6 chờ duyệt, 24 đang hiển thị, 6 đã ẩn; tin chờ duyệt đầu tiên là Mất áo khoác màu đen', () => {
+    expect(countByStatus()).toEqual({ pending: 6, approved: 24, hidden: 6 });
+    const pending = listPending();
+    expect(pending).toHaveLength(6);
+    expect(pending[0].title).toBe('Mất áo khoác màu đen');
   });
 });

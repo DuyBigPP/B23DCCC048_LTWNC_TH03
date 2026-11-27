@@ -9,6 +9,7 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './src/setupTests.ts',
     coverage: {
+      reporter: [['text', { skipFull: false }], 'html'],
       include: [
         'src/lib/permissions.ts',
         'src/lib/post-validate.ts',

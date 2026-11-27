@@ -1,18 +1,16 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { formatDate } from '@/lib/format';
-import { getPublicPosts } from '@/lib/posts';
+import { PLACES } from '@/data/posts';
+import { getPublicPosts, parsePostFilter } from '@/lib/posts';
 
 export const metadata: Metadata = { title: 'Tin đăng' };
 
-const one = (v: string | string[] | undefined): string => (Array.isArray(v) ? v[0] : v) ?? '';
-
 export default async function PostsPage({ searchParams }: PageProps<'/posts'>) {
   const sp = await searchParams;
-  const q = one(sp.q);
-  const kind = one(sp.kind);
-  const sort = one(sp.sort);
-  const posts = await getPublicPosts({ q, kind, sort });
+  const filter = parsePostFilter(sp);
+  const { q, kind, sort, place } = filter;
+  const posts = await getPublicPosts(filter);
 
   return (
     <main>
@@ -28,6 +26,13 @@ export default async function PostsPage({ searchParams }: PageProps<'/posts'>) {
             <option value="">Tất cả</option>
             <option value="Thất lạc">Thất lạc</option>
             <option value="Nhặt được">Nhặt được</option>
+          </select>
+        </div>
+        <div className="field">
+          <label htmlFor="place">Địa điểm</label>
+          <select id="place" name="place" defaultValue={place}>
+            <option value="">Tất cả</option>
+            {PLACES.map((p) => <option key={p} value={p}>{p}</option>)}
           </select>
         </div>
         <div className="field">

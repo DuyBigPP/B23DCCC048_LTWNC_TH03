@@ -18,7 +18,8 @@ describe('PostForm', () => {
 
     await user.click(screen.getByRole('button', { name: 'Đăng tin' }));
 
-    expect(await screen.findByLabelText('Tiêu đề')).toHaveAccessibleDescription('Tiêu đề tối thiểu 5 ký tự');
+    await screen.findByText('Tiêu đề tối thiểu 5 ký tự');
+    expect(screen.getByLabelText('Tiêu đề')).toHaveAccessibleDescription('Tiêu đề tối thiểu 5 ký tự');
     expect(screen.getByLabelText('Thông tin liên hệ')).toHaveAccessibleDescription(
       'Số Zalo gồm 10 chữ số, bắt đầu bằng 0',
     );

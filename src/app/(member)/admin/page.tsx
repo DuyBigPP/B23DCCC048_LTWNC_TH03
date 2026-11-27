@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { auth } from '@/auth';
-import { db } from '@/lib/db';
 import { formatDate } from '@/lib/format';
 import { can } from '@/lib/permissions';
+import { countByStatus, listPending } from '@/lib/posts';
 import { moderatePost } from './actions';
 
 export const metadata: Metadata = { title: 'Kiểm duyệt tin đăng', robots: { index: false } };
@@ -12,14 +12,14 @@ export default async function AdminPage() {
   const session = await auth();
   if (!can(session?.user?.role, 'post:moderate')) redirect('/forbidden');
 
-  const count = (s: string) => db.posts.filter((p) => p.status === s).length;
-  const pending = db.posts.filter((p) => p.status === 'pending');
+  const count = countByStatus();
+  const pending = listPending();
 
   return (
     <main>
       <h1>Kiểm duyệt tin đăng</h1>
       <p className="stats">
-        Chờ duyệt: {count('pending')} | Đang hiển thị: {count('approved')} | Đã ẩn: {count('hidden')}
+        Chờ duyệt: {count.pending} | Đang hiển thị: {count.approved} | Đã ẩn: {count.hidden}
       </p>
       {pending.length === 0 ? (
         <p className="card empty-state">Không còn tin nào chờ duyệt</p>

@@ -3,18 +3,21 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { signOut, useSession } from 'next-auth/react';
-import { useEffect, useEffectEvent } from 'react';
+import { useEffect, useEffectEvent, useRef } from 'react';
 
 export default function Header() {
   const { data: session, status, update } = useSession();
   const pathname = usePathname();
+  const lastPath = useRef(pathname);
   const syncSession = useEffectEvent(() => {
     void update();
   });
 
   // Đăng nhập bằng Server Action không làm SessionProvider tự tải lại phiên,
-  // nên mỗi lần đổi trang thì đồng bộ lại.
+  // nên mỗi lần chuyển trang thì đồng bộ lại (lúc mount SessionProvider đã tự tải).
   useEffect(() => {
+    if (lastPath.current === pathname) return;
+    lastPath.current = pathname;
     syncSession();
   }, [pathname]);
 

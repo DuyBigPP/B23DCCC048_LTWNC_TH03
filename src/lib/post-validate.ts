@@ -80,3 +80,14 @@ export const validatePost = (input: PostInput, now: string = today()): PostError
   if (contact) errors.contact = contact;
   return errors;
 };
+
+export const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+export const IMAGE_MAX_BYTES = 800 * 1024; // Server Action mặc định nhận tối đa 1 MB
+
+/** Ảnh là tùy chọn: không chọn (null hoặc file rỗng) thì hợp lệ. */
+export const validateImage = (file: File | null): string | undefined => {
+  if (!file || file.size === 0) return undefined;
+  if (!IMAGE_TYPES.includes(file.type)) return 'Ảnh phải là JPG, PNG, WEBP hoặc GIF';
+  if (file.size > IMAGE_MAX_BYTES) return 'Ảnh tối đa 800 KB';
+  return undefined;
+};

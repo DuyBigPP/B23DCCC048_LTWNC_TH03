@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { formatDate } from '@/lib/format';
+import { getImage } from '@/lib/images';
 import { getPublicPost, getPublicPosts } from '@/lib/posts';
 
 const SITE = 'http://localhost:3000';
@@ -54,6 +56,15 @@ export default async function PostDetailPage({ params }: PageProps<'/posts/[id]'
       <p>Ngày: {formatDate(post.date)}</p>
       <p>Người đăng: {post.authorEmail}</p>
       <p className="desc">{post.description}</p>
+      {getImage(post.id) && (
+        <Image
+          src={`/api/images/${post.id}`}
+          alt={`Ảnh đồ vật: ${post.title}`}
+          width={640}
+          height={480}
+          className="post-image"
+        />
+      )}
       <p className="meta">Cập nhật lúc: {new Date().toLocaleTimeString('vi-VN', { hour12: false })}</p>
       </article>
       <p><Link href="/posts">← Quay lại danh sách</Link></p>

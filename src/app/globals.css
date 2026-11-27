@@ -108,3 +108,4 @@ td.actions { display: flex; gap: .4rem; }
 h2 { font-size: 1.15rem; margin: 0 0 1rem; }
 button.btn-outline { background: #fff; color: var(--primary); border-color: #fca5a5; }
 button.btn-outline:hover { background: #fef2f2; }
+.post-image { display: block; max-width: 100%; height: auto; object-fit: contain; background: #f3f4f6; border-radius: 8px; margin: .75rem 0; }

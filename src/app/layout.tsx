@@ -4,6 +4,7 @@ import Providers from './providers';
 import './globals.css';
 
 export const metadata: Metadata = {
+  metadataBase: new URL('http://localhost:3000'),
   title: { default: 'PTIT Found', template: '%s | PTIT Found' },
   description: 'Tìm đồ thất lạc trong trường PTIT',
 };
